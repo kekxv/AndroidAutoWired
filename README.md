@@ -2,18 +2,25 @@
 
 代码下载 ： [https://github.com/kekxv/AndroidAutoWired](https://github.com/kekxv/AndroidAutoWired/archive/master.zip)
 
-本项目是用于模拟自动注入，通过添加注解`@Autowired`，举个例子：
+> 更新记录
+> - 20201226 增加`Sign`标记，用于区分各个不一样的实例。
+
+本项目是用于模拟自动注入，通过添加注解`@AutoWired`，举个例子：
 
 ```java
 public class School extends IAutoWired {
-    @Autowired
+    @AutoWired()
     private IStudent student;
-    @Autowired
+    @AutoWired(Sign = "小红")
+    private IStudent student_A;
+    @AutoWired(Sign = "小明")
+    private IStudent student_B;
+    @AutoWired
     private ITeacher teacher;
 }
 ```
 
-在`School`初始化的时候，会自动扫描包含`@Autowired`注解对应的实例，并将其注入。
+在`School`初始化的时候，会自动扫描包含`@AutoWired`注解对应的实例，并将其注入。
 
 如果变量类型为接口类，则需要有一个对应的继承类对应能初始化，用于注入，例如：
 ```java
@@ -46,9 +53,13 @@ public class TeacherImpl implements ITeacher {
 
 ```java
 public class MainActivity extends AppCompatActivity {
-    @Autowired
-    School school;
-    @Autowired
+    @AutoWired()
+    private IStudent student;
+    @AutoWired(Sign = "小红")
+    private IStudent student_A;
+    @AutoWired(Sign = "小明")
+    private IStudent student_B;
+    @AutoWired
     mSchool mSchool;
 
 
@@ -60,6 +71,10 @@ public class MainActivity extends AppCompatActivity {
         IAutoWired.init(this);
         IAutoWired.inject(this);
 
+        student.setName("小兰");
+        student_A.setName("小红");
+        student_B.setName("小明");
+
 
         school.work();
         mSchool.work();
@@ -67,13 +82,17 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-在例子中，`school`与`mSchool`包括其内部的`@Autowired`均自动注入成功，执行后输出结果为：
+在例子中，`school`与`mSchool`包括其内部的`@AutoWired`均自动注入成功，执行后输出结果为：
 
 ```shell
 I/TeacherImpl: >>>>>>>>>>>>>> teacher teach 0
-I/StudentImpl: >>>>>>>>>>>>>> student learn 0
+I/StudentImpl: >>>>>>>>>>>>>> student 小兰 learn 0
+I/StudentImpl: >>>>>>>>>>>>>> student 小红 learn 0
+I/StudentImpl: >>>>>>>>>>>>>> student 小明 learn 0
 I/TeacherImpl: >>>>>>>>>>>>>> teacher teach 1
-I/StudentImpl: >>>>>>>>>>>>>> student learn 1
+I/StudentImpl: >>>>>>>>>>>>>> student 小兰 learn 1
+I/StudentImpl: >>>>>>>>>>>>>> student 小红 learn 1
+I/StudentImpl: >>>>>>>>>>>>>> student 小明 learn 1
 ```
 
 ## 不足之处

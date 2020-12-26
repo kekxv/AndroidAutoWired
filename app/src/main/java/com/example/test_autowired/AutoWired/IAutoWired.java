@@ -13,7 +13,7 @@ public class IAutoWired {
         IAutoWired.inject(this);
     }
 
-    private static final Map<Class<?>, Object> beanList = new HashMap<>();
+    private static final Map<String, Object> beanList = new HashMap<>();
 
     public static void init(Context context) {
         Scanner.scan(context, Service.class);
@@ -28,7 +28,7 @@ public class IAutoWired {
             } catch (IllegalAccessException e) {
                 // e.printStackTrace();
             }
-            Autowired autowired = field.getAnnotation(Autowired.class);
+            AutoWired autowired = field.getAnnotation(AutoWired.class);
             if (autowired != null) {
                 try {
                     Class<?> clazz = field.getType();
@@ -45,12 +45,13 @@ public class IAutoWired {
                         if (!isFound) continue;
                     }
                     {
-                        if (!beanList.containsKey(clazz)) {
-                            beanList.put(clazz, cla.newInstance());
-                            IAutoWired.inject(beanList.get(clazz));
+                        String key = clazz.getName() + "_._" + autowired.Sign();
+                        if (!beanList.containsKey(key)) {
+                            beanList.put(key, cla.newInstance());
+                            IAutoWired.inject(beanList.get(key));
                         }
 
-                        Object target = beanList.get(clazz);
+                        Object target = beanList.get(key);
                         field.setAccessible(true);
                         field.set(source, target);
                     }

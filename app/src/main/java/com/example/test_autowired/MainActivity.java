@@ -5,22 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.test_autowired.AutoWired.IAutoWired;
-import com.example.test_autowired.AutoWired.Autowired;
+import com.example.test_autowired.AutoWired.AutoWired;
+import com.example.test_autowired.testClass.IStudent;
 import com.example.test_autowired.testClass.School;
 import com.example.test_autowired.testClass.mSchool;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
-
-import dalvik.system.PathClassLoader;
-
 public class MainActivity extends AppCompatActivity {
 
-    @Autowired
+    @AutoWired
     School school;
-    @Autowired
+    @AutoWired
     mSchool mSchool;
+
+    @AutoWired()
+    private IStudent student;
+    @AutoWired(Sign = "小红")
+    private IStudent student_A;
+    @AutoWired(Sign = "小明")
+    private IStudent student_B;
 
 
     @Override
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         IAutoWired.init(this);
         IAutoWired.inject(this);
 
+        student.setName("小兰");
+        student_A.setName("小红");
+        student_B.setName("小明");
 
         school.work();
         mSchool.work();
