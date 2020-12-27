@@ -4,8 +4,12 @@
 
 代码下载 ： [https://github.com/kekxv/AndroidAutoWired](https://github.com/kekxv/AndroidAutoWired/archive/master.zip)
 
+引入方式： ~~gradle:`implementation 'com.github.kekxv:AndroidAutoWired:0.1.0'`~~ (不知道啥子情况，不清作用)
+
 > 更新记录
 > - 20201226 增加`Sign`标记，用于区分各个不一样的实例。
+> - 20201226 增加`IAutoWired.registered`手动注册，可用于自动注入`Context`之类。
+
 
 本项目是用于模拟自动注入，通过添加注解`@AutoWired`，举个例子：
 
@@ -19,6 +23,10 @@ public class School extends IAutoWired {
     private IStudent student_B;
     @AutoWired
     private ITeacher teacher;
+
+    // 手动 IAutoWired.registered 注册的自动注入对象
+    @AutoWired
+    Context context;
 }
 ```
 
@@ -55,14 +63,18 @@ public class TeacherImpl implements ITeacher {
 
 ```java
 public class MainActivity extends AppCompatActivity {
+
+    @AutoWired
+    School school;
+    @AutoWired
+    mSchool mSchool;
+
     @AutoWired()
     private IStudent student;
     @AutoWired(Sign = "小红")
     private IStudent student_A;
     @AutoWired(Sign = "小明")
     private IStudent student_B;
-    @AutoWired
-    mSchool mSchool;
 
 
     @Override
@@ -71,15 +83,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         IAutoWired.init(this);
+
+        // 将注册 Context 自动注入
+        IAutoWired.registered(Context.class, this);
+
         IAutoWired.inject(this);
 
         student.setName("小兰");
         student_A.setName("小红");
         student_B.setName("小明");
 
-
         school.work();
         mSchool.work();
+
     }
 }
 ```

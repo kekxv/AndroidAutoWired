@@ -2,6 +2,7 @@ package com.example.test_autowired;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.kekxv.AutoWired.IAutoWired;
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         IAutoWired.init(this);
+
+        // 将注册 Context 自动注入
+        IAutoWired.registered(Context.class, this);
+
         IAutoWired.inject(this);
 
         student.setName("小兰");

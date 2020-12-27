@@ -1,5 +1,8 @@
 package com.example.test_autowired.testClass;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.kekxv.AutoWired.IAutoWired;
 import com.kekxv.AutoWired.AutoWired;
 import com.kekxv.AutoWired.Service;
@@ -15,12 +18,15 @@ public class School extends IAutoWired {
     private IStudent student_B;
     @AutoWired
     private ITeacher teacher;
+    @AutoWired
+    Context context;
 
-    public void work(){
+    public void work() {
         teacher.teach();
         student.learn();
         student_A.learn();
         student_B.learn();
+        Log.d("context", context.toString());
     }
 
 }

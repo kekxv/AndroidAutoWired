@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class IAutoWired {
 
@@ -17,6 +18,18 @@ public class IAutoWired {
 
     public static void init(Context context) {
         Scanner.scan(context, Service.class);
+    }
+
+    public static void registered(Class<?> cls, Object object) {
+        registered(cls, object, "");
+    }
+
+    public static void registered(Class<?> cls, Object object, String Sign) {
+        String key = cls.getName() + "_._" + Sign;
+        if (!beanList.containsKey(key)) {
+            beanList.put(key, object);
+            IAutoWired.inject(Objects.requireNonNull(beanList.get(key)));
+        }
     }
 
     public static void inject(Object source) {
@@ -32,23 +45,25 @@ public class IAutoWired {
             if (autowired != null) {
                 try {
                     Class<?> clazz = field.getType();
+                    String key = clazz.getName() + "_._" + autowired.Sign();
                     Class<?> cla = clazz;
-                    if (!clas.contains(clazz)) {
-                        boolean isFound = false;
-                        for (Class<?> c : clas) {
-                            if (clazz.isAssignableFrom(c)) {
-                                isFound = true;
-                                cla = c;
-                                break;
+                    if (!beanList.containsKey(key)) {
+                        if (!clas.contains(clazz)) {
+                            boolean isFound = false;
+                            for (Class<?> c : clas) {
+                                if (clazz.isAssignableFrom(c)) {
+                                    isFound = true;
+                                    cla = c;
+                                    break;
+                                }
                             }
+                            if (!isFound) continue;
                         }
-                        if (!isFound) continue;
                     }
                     {
-                        String key = clazz.getName() + "_._" + autowired.Sign();
                         if (!beanList.containsKey(key)) {
                             beanList.put(key, cla.newInstance());
-                            IAutoWired.inject(beanList.get(key));
+                            IAutoWired.inject(Objects.requireNonNull(beanList.get(key)));
                         }
 
                         Object target = beanList.get(key);
