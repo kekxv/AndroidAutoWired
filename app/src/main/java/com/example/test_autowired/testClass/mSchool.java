@@ -1,8 +1,8 @@
 package com.example.test_autowired.testClass;
 
-import com.example.test_autowired.AutoWired.AutoWired;
-import com.example.test_autowired.AutoWired.IAutoWired;
-import com.example.test_autowired.AutoWired.Service;
+import com.kekxv.AutoWired.AutoWired;
+import com.kekxv.AutoWired.IAutoWired;
+import com.kekxv.AutoWired.Service;
 
 @Service
 public class mSchool extends IAutoWired {

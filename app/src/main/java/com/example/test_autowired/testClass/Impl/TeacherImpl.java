@@ -2,7 +2,7 @@ package com.example.test_autowired.testClass.Impl;
 
 import android.util.Log;
 
-import com.example.test_autowired.AutoWired.Service;
+import com.kekxv.AutoWired.Service;
 import com.example.test_autowired.testClass.ITeacher;
 
 @Service

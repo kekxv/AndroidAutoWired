@@ -2,8 +2,8 @@ package com.example.test_autowired.testClass.Impl;
 
 import android.util.Log;
 
-import com.example.test_autowired.AutoWired.Service;
 import com.example.test_autowired.testClass.IStudent;
+import com.kekxv.AutoWired.Service;
 
 @Service
 public class StudentImpl implements IStudent {

@@ -1,4 +1,4 @@
-package com.example.test_autowired.AutoWired;
+package com.kekxv.AutoWired;
 
 
 import android.content.Context;

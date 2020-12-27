@@ -1,5 +1,7 @@
 # 安卓模拟自动注入
 
+源码位置 ： [https://github.com/kekxv/AndroidAutoWired](https://github.com/kekxv/AndroidAutoWired)
+
 代码下载 ： [https://github.com/kekxv/AndroidAutoWired](https://github.com/kekxv/AndroidAutoWired/archive/master.zip)
 
 > 更新记录

@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.test_autowired.AutoWired.IAutoWired;
-import com.example.test_autowired.AutoWired.AutoWired;
+import com.kekxv.AutoWired.IAutoWired;
+import com.kekxv.AutoWired.AutoWired;
 import com.example.test_autowired.testClass.IStudent;
 import com.example.test_autowired.testClass.School;
 import com.example.test_autowired.testClass.mSchool;

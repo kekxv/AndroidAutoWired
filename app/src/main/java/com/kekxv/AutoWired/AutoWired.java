@@ -1,4 +1,4 @@
-package com.example.test_autowired.AutoWired;
+package com.kekxv.AutoWired;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
