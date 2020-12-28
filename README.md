@@ -10,6 +10,25 @@
 > - 20201226 增加`Sign`标记，用于区分各个不一样的实例。
 > - 20201226 增加`IAutoWired.registered`手动注册，可用于自动注入`Context`之类。
 
+原理说明：
+
+1. 扫描所有带有 `@Service` 的自动注入类
+1. 手动或继承`IAutoWired` 自动调用 `IAutoWired.inject(this);` 进行注入。
+1. 为保证`private`也能注入成功；通过反射以及`setAccessible(true);`修改权限进行`newInstance()`以及`赋值`。
+
+```java
+Constructor<?> constructor = cla.getDeclaredConstructor();
+constructor.setAccessible(true);
+constructor.newInstance()
+```
+
+```java
+Field[] fields = source.getClass().getDeclaredFields();
+for (Field field : fields) {
+    field.setAccessible(true);
+    field.set(source, target);
+}
+```
 
 本项目是用于模拟自动注入，通过添加注解`@AutoWired`，举个例子：
 
