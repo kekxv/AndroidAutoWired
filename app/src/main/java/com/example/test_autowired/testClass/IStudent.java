@@ -4,4 +4,6 @@ public interface IStudent {
     void setName(String name);
 
     void learn();
+
+    void rollCall();
 }

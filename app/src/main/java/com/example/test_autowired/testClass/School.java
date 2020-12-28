@@ -21,6 +21,12 @@ public class School extends IAutoWired {
     @AutoWired
     Context context;
 
+    public School(){
+        student.rollCall();
+        student_A.rollCall();
+        student_B.rollCall();
+    }
+
     public void work() {
         teacher.teach();
         student.learn();

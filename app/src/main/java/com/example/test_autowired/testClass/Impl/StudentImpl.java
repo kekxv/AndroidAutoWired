@@ -18,4 +18,8 @@ public class StudentImpl implements IStudent {
     public void learn() {
         Log.i("StudentImpl", String.format(">>>>>>>>>>>>>> student %s learn %d", name, count++));
     }
+
+    public void rollCall() {
+        Log.i("StudentImpl", String.format(">>>>>>>>>>>>>> student %s here", name));
+    }
 }

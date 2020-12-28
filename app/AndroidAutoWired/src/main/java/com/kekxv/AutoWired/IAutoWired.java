@@ -1,6 +1,7 @@
 package com.kekxv.AutoWired;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class IAutoWired {
                         field.set(source, target);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("IAutoWired",e.toString());
                 }
             }
         }
