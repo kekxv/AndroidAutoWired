@@ -3,7 +3,9 @@ package com.kekxv.AutoWired;
 import android.content.Context;
 import android.util.Log;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,16 @@ public class IAutoWired {
                     }
                     {
                         if (!beanList.containsKey(key)) {
-                            beanList.put(key, cla.newInstance());
+                            // Method f = cla.getMethod(cla.getSimpleName());
+                            // f.setAccessible(true);
+                            try {
+                                Constructor<?> constructor = cla.getDeclaredConstructor();
+                                constructor.setAccessible(true);
+                                beanList.put(key, constructor.newInstance());
+                            } catch (Exception ignored) {
+                                beanList.put(key, cla.newInstance());
+                            }
+
                             IAutoWired.inject(Objects.requireNonNull(beanList.get(key)));
                         }
 
@@ -72,7 +83,7 @@ public class IAutoWired {
                         field.set(source, target);
                     }
                 } catch (Exception e) {
-                    Log.e("IAutoWired",e.toString());
+                    Log.e("IAutoWired", e.toString());
                 }
             }
         }

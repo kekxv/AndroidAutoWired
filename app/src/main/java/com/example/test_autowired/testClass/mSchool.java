@@ -15,7 +15,7 @@ public class mSchool extends IAutoWired {
     @AutoWired
     private ITeacher teacher;
 
-    public mSchool() {
+    private mSchool() {
         student.rollCall();
         student_A.rollCall();
         student_B.rollCall();
