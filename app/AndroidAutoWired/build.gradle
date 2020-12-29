@@ -51,8 +51,9 @@ afterEvaluate {
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.kekxv'
-                artifactId = 'AutoWired'
+                artifactId = 'autowired'
                 version = "$mainVersionName"
+                artifact(sourceJar)
             }
             // Creates a Maven publication called “debug”.
             debug(MavenPublication) {
@@ -60,18 +61,15 @@ afterEvaluate {
                 from components.debug
 
                 groupId = 'com.kekxv'
-                artifactId = 'AutoWired-debug'
+                artifactId = 'autowired-debug'
                 version = "$mainVersionName"
                 artifact(sourceJar)
             }
         }
         repositories {
-//            maven {
-//                url "$buildDir/repo"
-//            }
             maven {
                 name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/kekxv/AndroidAutoWired"
+                url = "https://maven.pkg.github.com/kekxv/AndroidAutoWired/"
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")

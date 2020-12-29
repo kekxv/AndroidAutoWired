@@ -28,15 +28,6 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
-//    //生成jar包
-//    task makeJar(type: Copy) {
-//        delete 'build/libs/AndroidAutoWired.jar'
-//        from('build/intermediates/aar_main_jar/release/') //jar文件来源
-//        into('build/libs/') //生成路径
-//        include('classes.jar')
-//        rename('classes.jar', 'AndroidAutoWired.jar') //AndroidAutoWired.jar
-//    }
-//    makeJar.dependsOn(build)
 }
 
 dependencies {
