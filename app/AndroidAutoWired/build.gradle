@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
+
+def mainVersionName = "0.2.1"
 
 android {
     compileSdkVersion 30
@@ -10,7 +13,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
-        versionName "0.2.1"
+        versionName "$mainVersionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -31,23 +34,53 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
-    // app/AndroidAutoWired/build/intermediates/runtime_library_classes_jar/release
-    //生成jar包
-    task makeJar(type: Copy) {
-        delete 'build/libs/AndroidAutoWired-debug.jar'
-        from('build/intermediates/aar_main_jar/debug') //jar文件来源
-        into('build/libs/') //生成路径
-        include('classes.jar')
-        rename('classes.jar', 'AndroidAutoWired-debug.jar') //AndroidAutoWired.jar
-
-        delete 'build/libs/AndroidAutoWired.jar'
-        from('build/intermediates/runtime_library_classes_jar/release/') //jar文件来源
-        into('build/libs/') //生成路径
-        include('classes.jar')
-        rename('classes.jar', 'AndroidAutoWired.jar') //AndroidAutoWired.jar
-    }
-    makeJar.dependsOn(build)
 }
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+//https://stackoverflow.com/questions/26874498/publish-an-android-library-to-maven-with-aar-and-source-jar
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.kekxv'
+                artifactId = 'AutoWired'
+                version = "$mainVersionName"
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                groupId = 'com.kekxv'
+                artifactId = 'AutoWired-debug'
+                version = "$mainVersionName"
+                artifact(sourceJar)
+            }
+        }
+        repositories {
+//            maven {
+//                url "$buildDir/repo"
+//            }
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/kekxv/AndroidAutoWired"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
+}
+
 
 dependencies {
 
