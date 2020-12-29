@@ -95,17 +95,17 @@ publishing {
     }
 
     repositories {
+//        maven {
+//            url "$buildDir/repo"
+//        }
         maven {
-            url "$buildDir/repo"
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/kekxv/AndroidAutoWired/"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
         }
-//            maven {
-//                name = "GitHubPackages"
-//                url = "https://maven.pkg.github.com/kekxv/AndroidAutoWired/"
-//                credentials {
-//                    username = System.getenv("GITHUB_ACTOR")
-//                    password = System.getenv("GITHUB_TOKEN")
-//                }
-//            }
     }
 }
 //}
