@@ -39,6 +39,9 @@
 >
 
 > 更新记录
+> - 20210114 增加`Service`内`service`标记，用于开启调用`start()`。
+> - 20210114 自动注入后注入，可在更新之后自动注入之前未找到的注入字段。
+> - 20210114 在原有自动扫描的基础上，增加手动传入 `Service` 类。
 > - 20201226 增加`Sign`标记，用于区分各个不一样的实例。
 > - 20201226 增加`IAutoWired.registered`手动注册，可用于自动注入`Context`之类。
 
@@ -133,10 +136,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        IAutoWired.init(this);
+        // 自动扫描
+        // IAutoWired.init(this);
+        // 手动设置
+        IAutoWired.init(new Class<?>[]{
+                StudentImpl.class,
+                TeacherImpl.class,
+                mSchool.class,
+                School.class,
+        });
 
         // 将注册 Context 自动注入
         IAutoWired.registered(Context.class, this);
+
 
         IAutoWired.inject(this);
 
