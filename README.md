@@ -39,6 +39,9 @@
 >
 
 > 更新记录
+> - 20210114 修复重复依赖陷入无限回调的问题。
+> - 20210114 增加 `InjectView` 自动`findViewById`并赋值；需要 `setContentView` 之后调用。
+> - 
 > - 20210114 增加`Service`内`service`标记，用于开启调用`start()`。
 > - 20210114 自动注入后注入，可在更新之后自动注入之前未找到的注入字段。
 > - 20210114 在原有自动扫描的基础上，增加手动传入 `Service` 类。
@@ -47,7 +50,7 @@
 
 原理说明：
 
-1. 扫描所有带有 `@Service` 的自动注入类
+1. 扫描所有(或手动传入)带有 `@Service` 的自动注入类
 1. 手动或继承`IAutoWired` 自动调用 `IAutoWired.inject(this);` 进行注入。
 1. 为保证`private`也能注入成功；通过反射以及`setAccessible(true);`修改权限进行`newInstance()`以及`赋值`。
 

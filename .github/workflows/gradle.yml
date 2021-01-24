@@ -15,4 +15,6 @@ jobs:
           gradle app:AutoWired:build
           gradle app:AutoWired:publish
         env:
+          GITHUB_USER: ${{ secrets.GITHUB_USER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
