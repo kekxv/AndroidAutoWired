@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.example.test_autowired.testClass.IStudent;
+import com.example.test_autowired.testClass.Impl.HomeworkChineseImpl;
+import com.example.test_autowired.testClass.Impl.HomeworkMathImpl;
 import com.example.test_autowired.testClass.Impl.StudentImpl;
 import com.example.test_autowired.testClass.Impl.TeacherImpl;
 import com.example.test_autowired.testClass.School;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 TeacherImpl.class,
                 mSchool.class,
                 School.class,
+                HomeworkChineseImpl.class,
+                HomeworkMathImpl.class,
         });
 
 

@@ -24,9 +24,10 @@ public class IAutoWired {
      * 自动调用 inject
      */
     public IAutoWired() {
+        Service service = null;
+        Class<?> cla = this.getClass();
         try {
-            Class<?> cla = this.getClass();
-            Service service = cla.getAnnotation(Service.class);
+            service = cla.getAnnotation(Service.class);
             if (service != null) {
                 registered(cla, this);
             }
@@ -34,7 +35,6 @@ public class IAutoWired {
             e.printStackTrace();
         }
         IAutoWired.inject(this);
-
     }
 
     /**
@@ -174,8 +174,8 @@ public class IAutoWired {
      */
     public static void inject(Object source) {
         List<Class<?>> clas = Scanner.getList();
-
-        Field[] fields = source.getClass().getDeclaredFields();
+        Class<?> sourceClass = source.getClass();
+        Field[] fields = sourceClass.getDeclaredFields();
         List<Field> viewFields = new ArrayList<>();
         int hasActivity = 0;
         Field activityField = null;
@@ -203,17 +203,76 @@ public class IAutoWired {
                     Class<?> cla = clazz;
                     if (!beanList.containsKey(key)) {
                         if (!clas.contains(clazz)) {
-                            boolean isFound = false;
+                            List<Class<?>> foundCls = new ArrayList<>();
                             for (Class<?> c : clas) {
                                 if (clazz.isAssignableFrom(c)) {
-                                    isFound = true;
-                                    cla = c;
-                                    break;
+                                    foundCls.add(c);
                                 }
                             }
-                            if (!isFound) {
+                            if (foundCls.isEmpty()) {
                                 lastAutoWiredInjectList(key, field, source);
                                 continue;
+                            } else if (foundCls.size() == 1) {
+                                cla = foundCls.get(0);
+                            } else {
+                                if (autowired.Interpretation() == null || autowired.Interpretation().isEmpty()) {
+                                    throw new Exception("无法确定注入对象");
+                                }
+                                Method method;
+                                try {
+                                    method = sourceClass.getMethod(autowired.Interpretation());
+                                } catch (Exception e) {
+                                    method = sourceClass.getDeclaredMethod(autowired.Interpretation());
+                                    method.setAccessible(true);
+                                }
+                                if (method == null) {
+                                    throw new Exception("未指定 Interpretation");
+                                }
+                                method.setAccessible(true);
+                                Object obj = null;
+                                if (String.class == method.getReturnType()) {
+                                    cla = null;
+                                    String className = (String) method.invoke(source);
+                                    for (Class<?> c : foundCls) {
+                                        if (c.getName().contains(className)) {
+                                            cla = c;
+                                            break;
+                                        }
+                                    }
+                                    if (cla == null) {
+                                        throw new Exception("无法确定注入对象");
+                                    }
+                                    try {
+                                        Constructor<?> constructor = cla.getDeclaredConstructor();
+                                        constructor.setAccessible(true);
+                                        obj = constructor.newInstance();
+                                    } catch (Exception ignored) {
+                                        obj = cla.newInstance();
+                                    }
+                                } else if (method.getReturnType() == Class.class) {
+                                    cla = (Class<?>) method.invoke(source);
+                                    try {
+                                        Constructor<?> constructor = cla.getDeclaredConstructor();
+                                        constructor.setAccessible(true);
+                                        obj = constructor.newInstance();
+                                    } catch (Exception ignored) {
+                                        obj = cla.newInstance();
+                                    }
+                                } else if (clazz.isAssignableFrom(method.getReturnType())) {
+                                    obj = method.invoke(source);
+                                    cla = obj.getClass();
+                                }
+                                registered(key, obj);
+                                try {
+                                    Service service = cla.getAnnotation(Service.class);
+                                    if (service != null && service.service()) {
+                                        Method startMethod = cla.getMethod("start");
+                                        startMethod.setAccessible(true);
+                                        startMethod.invoke(obj);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
@@ -263,6 +322,21 @@ public class IAutoWired {
             return;
         }
         if (hasActivity != 1) return;
+        injectHasActivity(source,
+                activityKey,
+                activityField,
+                viewFields);
+    }
+
+    /**
+     * 调用注入 injectView
+     *
+     * @param source
+     * @param activityKey
+     * @param activityField
+     * @param viewFields
+     */
+    private static void injectHasActivity(Object source, String activityKey, Field activityField, List<Field> viewFields) {
         try {
             activityField.setAccessible(true);
             Activity activity = (Activity) activityField.get(source);

@@ -15,6 +15,13 @@ public class mSchool extends IAutoWired {
     @AutoWired
     private ITeacher teacher;
 
+    @AutoWired(Sign = "Math", Interpretation = "getIHomework")
+    private IHomework iHomework;
+
+    public String getIHomework() {
+        return "HomeworkMathImpl";
+    }
+
     private mSchool() {
         student.rollCall();
         student_A.rollCall();
@@ -26,6 +33,8 @@ public class mSchool extends IAutoWired {
         student.learn();
         student_A.learn();
         student_B.learn();
+
+        iHomework.Assignment();
     }
 
 }

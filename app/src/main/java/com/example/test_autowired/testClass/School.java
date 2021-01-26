@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.test_autowired.R;
+import com.example.test_autowired.testClass.Impl.HomeworkChineseImpl;
 import com.kekxv.AutoWired.AutoWired;
 import com.kekxv.AutoWired.IAutoWired;
 import com.kekxv.AutoWired.InjectView;
@@ -32,6 +33,13 @@ public class School extends IAutoWired {
     @InjectView(R.id.text)
     TextView text;
 
+    @AutoWired(Sign = "Chinese", Interpretation = "getIHomework")
+    private IHomework iHomework;
+
+    Class<?> getIHomework() {
+        return HomeworkChineseImpl.class;
+    }
+
     public School() {
         student.rollCall();
         student_A.rollCall();
@@ -47,6 +55,7 @@ public class School extends IAutoWired {
         if (text != null) {
             text.setText("开始上课");
         }
+        iHomework.Assignment();
     }
 
 }
