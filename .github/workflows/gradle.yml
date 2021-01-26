@@ -12,9 +12,9 @@ jobs:
           java-version: 1.8
       - name: Publish package
         env:
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+          ACCESS_USER: ${{ secrets.ACCESS_USER }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_PERSONAL_ACCESS_TOKEN: ${{ secrets.ACCESS_PERSONAL_ACCESS_TOKEN }}
         run: |
           gradle app:AutoWired:build
           gradle app:AutoWired:publish
