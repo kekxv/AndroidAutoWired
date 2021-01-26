@@ -7,7 +7,7 @@ import com.kekxv.AutoWired.Service;
 @Service
 public class mSchool extends IAutoWired {
     @AutoWired()
-    private IStudent student;
+    public IStudent student;
     @AutoWired(Sign = "小红")
     private IStudent student_A;
     @AutoWired(Sign = "小明")

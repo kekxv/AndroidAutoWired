@@ -180,8 +180,12 @@ public class IAutoWired {
         int hasActivity = 0;
         Field activityField = null;
         String activityKey = "";
+
+        List<Field> autoWiredFields = new ArrayList<>();
+        List<Field> interpretationFields = new ArrayList<>();
         for (Field field : fields) {
             try {
+                field.setAccessible(true);
                 if (field.get(source) != null) continue;
             } catch (IllegalAccessException e) {
                 // e.printStackTrace();
@@ -191,15 +195,69 @@ public class IAutoWired {
                 viewFields.add(field);
             }
             AutoWired autowired = field.getAnnotation(AutoWired.class);
+            if (autowired == null) continue;
+
+            try {
+                Class<?> clazz = field.getType();
+                String key = clazz.getName() + "_._" + autowired.Sign();
+                if (Activity.class.isAssignableFrom(clazz)) {
+                    hasActivity++;
+                    activityField = field;
+                    activityKey = key;
+                }
+                if (!beanList.containsKey(key)) {
+                    if (!clas.contains(clazz)) {
+                        List<Class<?>> foundCls = new ArrayList<>();
+                        for (Class<?> c : clas) {
+                            if (clazz.isAssignableFrom(c)) {
+                                foundCls.add(c);
+                            }
+                        }
+                        if (foundCls.isEmpty()) {
+                            lastAutoWiredInjectList(key, field, source);
+                            continue;
+                        } else if (foundCls.size() > 1) {
+                            if (autowired.Interpretation() == null || autowired.Interpretation().isEmpty()) {
+                                lastAutoWiredInjectList(key, field, source);
+                                continue;
+                            }
+                            interpretationFields.add(field);
+                            continue;
+                        }
+                    }
+                }
+                autoWiredFields.add(field);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        injectAutoWired(source, autoWiredFields, clas, sourceClass);
+        injectAutoWiredInterpretation(source, interpretationFields, clas, sourceClass);
+
+        if (viewFields.isEmpty()) return;
+        if (source instanceof Activity) {
+            try {
+                IAutoWired.injectView((Activity) source, fields);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if (hasActivity != 1) return;
+        injectHasActivity(source,
+                activityKey,
+                activityField,
+                viewFields);
+    }
+
+    private static void injectAutoWired(Object source, List<Field> fields, List<Class<?>> clas, Class<?> sourceClass) {
+        for (Field field : fields) {
+            AutoWired autowired = field.getAnnotation(AutoWired.class);
             if (autowired != null) {
                 try {
                     Class<?> clazz = field.getType();
                     String key = clazz.getName() + "_._" + autowired.Sign();
-                    if (Activity.class.isAssignableFrom(clazz)) {
-                        hasActivity++;
-                        activityField = field;
-                        activityKey = key;
-                    }
                     Class<?> cla = clazz;
                     if (!beanList.containsKey(key)) {
                         if (!clas.contains(clazz)) {
@@ -209,77 +267,15 @@ public class IAutoWired {
                                     foundCls.add(c);
                                 }
                             }
-                            if (foundCls.isEmpty()) {
-                                lastAutoWiredInjectList(key, field, source);
-                                continue;
-                            } else if (foundCls.size() == 1) {
+                            if (foundCls.size() == 1) {
                                 cla = foundCls.get(0);
                             } else {
-                                if (autowired.Interpretation() == null || autowired.Interpretation().isEmpty()) {
-                                    throw new Exception("无法确定注入对象");
-                                }
-                                Method method;
-                                try {
-                                    method = sourceClass.getMethod(autowired.Interpretation());
-                                } catch (Exception e) {
-                                    method = sourceClass.getDeclaredMethod(autowired.Interpretation());
-                                    method.setAccessible(true);
-                                }
-                                if (method == null) {
-                                    throw new Exception("未指定 Interpretation");
-                                }
-                                method.setAccessible(true);
-                                Object obj = null;
-                                if (String.class == method.getReturnType()) {
-                                    cla = null;
-                                    String className = (String) method.invoke(source);
-                                    for (Class<?> c : foundCls) {
-                                        if (c.getName().contains(className)) {
-                                            cla = c;
-                                            break;
-                                        }
-                                    }
-                                    if (cla == null) {
-                                        throw new Exception("无法确定注入对象");
-                                    }
-                                    try {
-                                        Constructor<?> constructor = cla.getDeclaredConstructor();
-                                        constructor.setAccessible(true);
-                                        obj = constructor.newInstance();
-                                    } catch (Exception ignored) {
-                                        obj = cla.newInstance();
-                                    }
-                                } else if (method.getReturnType() == Class.class) {
-                                    cla = (Class<?>) method.invoke(source);
-                                    try {
-                                        Constructor<?> constructor = cla.getDeclaredConstructor();
-                                        constructor.setAccessible(true);
-                                        obj = constructor.newInstance();
-                                    } catch (Exception ignored) {
-                                        obj = cla.newInstance();
-                                    }
-                                } else if (clazz.isAssignableFrom(method.getReturnType())) {
-                                    obj = method.invoke(source);
-                                    cla = obj.getClass();
-                                }
-                                registered(key, obj);
-                                try {
-                                    Service service = cla.getAnnotation(Service.class);
-                                    if (service != null && service.service()) {
-                                        Method startMethod = cla.getMethod("start");
-                                        startMethod.setAccessible(true);
-                                        startMethod.invoke(obj);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                                continue;
                             }
                         }
                     }
                     {
                         if (!beanList.containsKey(key)) {
-                            // Method f = cla.getMethod(cla.getSimpleName());
-                            // f.setAccessible(true);
                             Object obj = null;
                             try {
                                 Constructor<?> constructor = cla.getDeclaredConstructor();
@@ -312,21 +308,103 @@ public class IAutoWired {
                 }
             }
         }
-        if (viewFields.isEmpty()) return;
-        if (source instanceof Activity) {
-            try {
-                IAutoWired.injectView((Activity) source, fields);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
-        if (hasActivity != 1) return;
-        injectHasActivity(source,
-                activityKey,
-                activityField,
-                viewFields);
     }
+
+    private static void injectAutoWiredInterpretation(Object source, List<Field> fields, List<Class<?>> clas, Class<?> sourceClass) {
+
+        for (Field field : fields) {
+            try {
+                if (field.get(source) != null) continue;
+            } catch (IllegalAccessException e) {
+                // e.printStackTrace();
+            }
+            AutoWired autowired = field.getAnnotation(AutoWired.class);
+            if (autowired != null) {
+                try {
+                    Class<?> clazz = field.getType();
+                    String key = clazz.getName() + "_._" + autowired.Sign();
+                    Class<?> cla = clazz;
+                    if (!beanList.containsKey(key)) {
+                        if (!clas.contains(clazz)) {
+                            List<Class<?>> foundCls = new ArrayList<>();
+                            for (Class<?> c : clas) {
+                                if (clazz.isAssignableFrom(c)) {
+                                    foundCls.add(c);
+                                }
+                            }
+                            if (foundCls.size() <= 1) {
+                                continue;
+                            }
+                            if (autowired.Interpretation() == null || autowired.Interpretation().isEmpty()) {
+                                throw new Exception("无法确定注入对象");
+                            }
+                            Method method;
+                            try {
+                                method = sourceClass.getMethod(autowired.Interpretation());
+                            } catch (Exception e) {
+                                method = sourceClass.getDeclaredMethod(autowired.Interpretation());
+                                method.setAccessible(true);
+                            }
+                            if (method == null) {
+                                throw new Exception("未指定 Interpretation");
+                            }
+                            method.setAccessible(true);
+                            Object obj = null;
+                            if (String.class == method.getReturnType()) {
+                                cla = null;
+                                String className = (String) method.invoke(source);
+                                for (Class<?> c : foundCls) {
+                                    if (c.getName().contains(className)) {
+                                        cla = c;
+                                        break;
+                                    }
+                                }
+                                if (cla == null) {
+                                    throw new Exception("无法确定注入对象");
+                                }
+                                try {
+                                    Constructor<?> constructor = cla.getDeclaredConstructor();
+                                    constructor.setAccessible(true);
+                                    obj = constructor.newInstance();
+                                } catch (Exception ignored) {
+                                    obj = cla.newInstance();
+                                }
+                            } else if (method.getReturnType() == Class.class) {
+                                cla = (Class<?>) method.invoke(source);
+                                try {
+                                    Constructor<?> constructor = cla.getDeclaredConstructor();
+                                    constructor.setAccessible(true);
+                                    obj = constructor.newInstance();
+                                } catch (Exception ignored) {
+                                    obj = cla.newInstance();
+                                }
+                            } else if (clazz.isAssignableFrom(method.getReturnType())) {
+                                obj = method.invoke(source);
+                                cla = obj.getClass();
+                            }
+                            registered(key, obj);
+                            try {
+                                Service service = cla.getAnnotation(Service.class);
+                                if (service != null && service.service()) {
+                                    Method startMethod = cla.getMethod("start");
+                                    startMethod.setAccessible(true);
+                                    startMethod.invoke(obj);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    Object target = beanList.get(key);
+                    field.setAccessible(true);
+                    field.set(source, target);
+                } catch (Exception e) {
+                    Log.e("IAutoWired", e.toString());
+                }
+            }
+        }
+    }
+
 
     /**
      * 调用注入 injectView
