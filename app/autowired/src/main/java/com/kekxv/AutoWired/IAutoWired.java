@@ -2,6 +2,7 @@ package com.kekxv.AutoWired;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 
@@ -175,7 +176,7 @@ public class IAutoWired {
     public static void inject(Object source) {
         List<Class<?>> clas = Scanner.getList();
         Class<?> sourceClass = source.getClass();
-        Field[] fields = sourceClass.getDeclaredFields();
+        Field[] fields = getDeclaredFields(sourceClass);
         List<Field> viewFields = new ArrayList<>();
         int hasActivity = 0;
         Field activityField = null;
@@ -249,6 +250,34 @@ public class IAutoWired {
                 activityKey,
                 activityField,
                 viewFields);
+    }
+
+    private static Field[] getDeclaredFields(Class<?> sourceClass) {
+        Map<String, Field> list = new ArrayMap<>();
+        if (sourceClass == null || sourceClass == Object.class) return new Field[0];
+        Class<?>[] cla = sourceClass.getInterfaces();
+        Field[] fields = sourceClass.getDeclaredFields();
+        for (Field field : fields) {
+            if (list.containsKey(field.getName())) continue;
+            list.put(field.getName(), field);
+        }
+        for (Class<?> cls : cla) {
+            Field[] _fields = cls.getDeclaredFields();
+            for (Field field : _fields) {
+                if (list.containsKey(field.getName())) continue;
+                list.put(field.getName(), field);
+            }
+        }
+        for (Field field : fields) {
+            if (list.containsKey(field.getName())) continue;
+            list.put(field.getName(), field);
+        }
+        fields = new Field[list.size()];
+        int i = 0;
+        for (String key : list.keySet()) {
+            fields[i++] = list.get(key);
+        }
+        return fields;
     }
 
     private static void injectAutoWired(Object source, List<Field> fields, List<Class<?>> clas, Class<?> sourceClass) {

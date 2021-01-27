@@ -58,12 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         // 将注册 Context 自动注入
-        // IAutoWired.registered(Context.class, this);
+        IAutoWired.registered(Context.class, this);
 
         IAutoWired.inject(this);
 
-        // 后注册测试 将注册 Context 自动注入
-        IAutoWired.registered(Context.class, this);
+        // 后注册测试 将注册 Activity 自动注入
         IAutoWired.registered(Activity.class, this);
 
         student.setName("小兰");
