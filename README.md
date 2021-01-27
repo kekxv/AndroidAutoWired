@@ -6,6 +6,8 @@
 
 API 文档参照 [API](doc/API.md)。
 
+仓库 ： [Repo](https://github.com/kekxv/JavaRepo/packages) 。
+
 引入方式 ： [Introduce](doc/Introduce.md)
 
 使用方式 ： [Usage](doc/Usage.md)
