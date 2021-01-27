@@ -11,7 +11,7 @@ public @interface Service {
     /**
      * 是否是服务类型，如果为 true
      * 则自动调用 start 无参 函数
-     * 默认为 stop
+     * 默认为 false
      * @return
      */
     public boolean service() default false;

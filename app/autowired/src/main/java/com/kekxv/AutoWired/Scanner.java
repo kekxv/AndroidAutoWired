@@ -26,7 +26,7 @@ public class Scanner {
      *
      * @return
      */
-    public static List<Class<?>> getList() {
+    static List<Class<?>> getList() {
         return list;
     }
 
@@ -36,7 +36,7 @@ public class Scanner {
      * @param _list
      * @param annotationClass
      */
-    public static <A extends Annotation> void setList(Class<?>[] _list, Class<A> annotationClass) {
+    static <A extends Annotation> void setList(Class<?>[] _list, Class<A> annotationClass) {
         for (Class<?> aClass : _list) {
             if (!list.contains(aClass))
                 list.add(aClass);
@@ -51,7 +51,7 @@ public class Scanner {
      * @param annotationClass
      * @param <A>
      */
-    public static <A extends Annotation> void scan(String PackageCodePath, String packageName, Class<A> annotationClass) {
+    static <A extends Annotation> void scan(String PackageCodePath, String packageName, Class<A> annotationClass) {
         try {
             DexFile df = new DexFile(PackageCodePath);
             for (Enumeration<String> inter = df.entries(); inter.hasMoreElements(); ) {
@@ -78,7 +78,7 @@ public class Scanner {
      * @param annotationClass
      * @param <A>
      */
-    public static <A extends Annotation> void scan(Context context, Class<A> annotationClass) {
+    static <A extends Annotation> void scan(Context context, Class<A> annotationClass) {
         scan(context.getPackageCodePath(), context.getPackageName(), annotationClass);
     }
 }
