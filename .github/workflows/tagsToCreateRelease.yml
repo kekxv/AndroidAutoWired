@@ -24,3 +24,19 @@ jobs:
           body_path: README.md
           draft: false
           prerelease: false
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Publish package
+        env:
+          ACCESS_USER: ${{ secrets.ACCESS_USER }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_PERSONAL_ACCESS_TOKEN: ${{ secrets.ACCESS_PERSONAL_ACCESS_TOKEN }}
+        run: |
+          gradle app:AutoWired:build
+          gradle app:AutoWired:publish

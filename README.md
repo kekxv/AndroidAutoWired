@@ -8,7 +8,7 @@ API 文档参照 [API](doc/API.md)。
 
 引入方式 ： [Introduce](doc/Introduce.md)
 
-使用方式 ： [Introduce](doc/Usage.md)
+使用方式 ： [Usage](doc/Usage.md)
 
 
 > 更新记录
