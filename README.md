@@ -1,3 +1,9 @@
+# 在 Android 应用中使用 Dagger
+
+`Dagger` 效果更好，建议使用，当前项目就作为一个学习的参考项目吧。
+
+[https://developer.android.com/training/dependency-injection/dagger-android?hl=zh-cn](https://developer.android.com/training/dependency-injection/dagger-android?hl=zh-cn)
+
 # 安卓模拟自动注入
 
 源码位置 ： [https://github.com/kekxv/AndroidAutoWired](https://github.com/kekxv/AndroidAutoWired)
