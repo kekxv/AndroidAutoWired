@@ -20,5 +20,5 @@ public @interface InjectView {
      *
      * @return
      */
-    int value();
+    int value() default 0;
 }

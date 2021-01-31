@@ -504,6 +504,9 @@ public class IAutoWired {
                 if (annotation == null) continue;
                 //找到VIew的id
                 int value = annotation.value();
+                if (value <= 0) {
+                    value = getCommentID(activity, "id", field.getName());
+                }
                 try {
                     //暴力访问，可获取私有方法
                     findViewByIdMethod.setAccessible(true);
@@ -516,6 +519,29 @@ public class IAutoWired {
                 }
             }
         }
+    }
+
+    /**
+     * 反射得到组件的id号
+     *
+     * @param activity  activity
+     * @param className layout,string,drawable,style,id,color,array
+     * @param idName    唯一文件名
+     * @return 资源id
+     */
+    public static int getCommentID(Activity activity, String className, String idName) {
+        int id = -1;
+        // Log.v("testapp", "appname  :" + activity.getPackageName());
+        try {
+            Class<?> cls = Class.forName(activity.getPackageName()
+                    + ".R$" + className);
+            // Log.v("testapp", "classname :" + cls.getName());
+            id = cls.getField(idName).getInt(cls);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Log.v("testapp", "get error");
+        }
+        return id;
     }
 
     /**
