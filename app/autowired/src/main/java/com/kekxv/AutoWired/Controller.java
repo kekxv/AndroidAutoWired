@@ -7,13 +7,11 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Service {
-    /**
-     * 是否是服务类型，如果为 true
-     * 则自动调用 start 无参 函数
-     * 默认为 false
-     */
-    public boolean service() default false;
-
+public @interface Controller {
+  /**
+   * web路径
+   * 默认为 ""
+   */
+  public String value() default "";
 }
 

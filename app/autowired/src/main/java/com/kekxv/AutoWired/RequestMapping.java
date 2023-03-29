@@ -5,15 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Service {
-    /**
-     * 是否是服务类型，如果为 true
-     * 则自动调用 start 无参 函数
-     * 默认为 false
-     */
-    public boolean service() default false;
+public @interface RequestMapping {
+  String name() default "";
 
+  String[] value() default {};
+
+  boolean regex() default false;
 }
-

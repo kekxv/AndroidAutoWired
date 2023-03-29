@@ -1,5 +1,11 @@
 # 引入方式
 
+`0.2.10` 版本增加`web`服务，需要依赖：
+```
+    implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
+    // https://github.com/NanoHttpd/nanohttpd
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+```
 
 以下配置均在项目`build.gradle`下
 

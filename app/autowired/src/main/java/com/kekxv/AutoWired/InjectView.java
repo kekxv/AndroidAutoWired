@@ -17,8 +17,6 @@ import java.lang.annotation.Target;
 public @interface InjectView {
     /**
      * id 需要
-     *
-     * @return
      */
     int value() default 0;
 }
