@@ -3,6 +3,7 @@ package com.kekxv.AutoWired;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -104,7 +105,7 @@ public class WebService extends NanoHTTPD {
     } else {
       return newFixedLengthResponse(Response.Status.OK,
           "application/json",
-          JSONObject.toJSONString(resp));
+          JSON.toJSONString(resp));
     }
   }
 
