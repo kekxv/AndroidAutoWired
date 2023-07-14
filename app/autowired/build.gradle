@@ -9,7 +9,7 @@ def getGroupPageId = { ->
     return "com.kekxv" // Replace with version Name
 }
 def getVersionName = { ->
-    return "0.2.10" // Replace with version Name
+    return "0.2.11" // Replace with version Name
 }
 def getArtificatId = { ->
     return "autowired" // Replace with library name ID
@@ -120,6 +120,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation group: 'com.alibaba', name: 'fastjson', version: '1.2.83'
+    // implementation group: 'com.alibaba', name: 'fastjson', version: '2.+'
     // https://github.com/NanoHttpd/nanohttpd
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }

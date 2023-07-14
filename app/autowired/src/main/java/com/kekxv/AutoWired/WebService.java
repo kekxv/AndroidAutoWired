@@ -4,16 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@SuppressWarnings({"JavadocDeclaration", "unused"})
 public class WebService extends NanoHTTPD {
   private static final int MAX_RANGE_LEN = 512 * 1024;
 
@@ -67,14 +66,14 @@ public class WebService extends NanoHTTPD {
       throws InvocationTargetException, IllegalAccessException {
     Object resp = null;
     if (method.getParameterTypes().length > 2) {
-      resp = method.invoke(obj, session, files, JSONObject.parseObject(postData, method.getParameterTypes()[2]));
+      resp = method.invoke(obj, session, files, JSON.parseObject(postData, method.getParameterTypes()[2]));
     } else if (method.getParameterTypes().length > 1) {
-      resp = method.invoke(obj, session, JSONObject.parseObject(postData, method.getParameterTypes()[1]));
+      resp = method.invoke(obj, session, JSON.parseObject(postData, method.getParameterTypes()[1]));
     } else if (method.getParameterTypes().length > 0) {
       if (method.getParameterTypes()[0] == IHTTPSession.class) {
         resp = method.invoke(obj, session);
       } else {
-        resp = method.invoke(obj, JSONObject.parseObject(postData, method.getParameterTypes()[0]));
+        resp = method.invoke(obj, JSON.parseObject(postData, method.getParameterTypes()[0]));
       }
     } else {
       resp = method.invoke(obj);
