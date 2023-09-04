@@ -20,6 +20,9 @@ API 文档参照 [API](doc/API.md)。
 
 
 > 更新记录
+> - 20230901 增加 http 服务，基于 NanoHTTPD ，使用`@Controller("路径")`和`@RequestMapping({"/方法"})`方式指定 。
+> - 20230901 增加 `com.kekxv.uvcamera` 的 `UVCamera`操作`v4l2`摄像头。
+> 
 > - 20210127 修复 `interface` 接口包含变量没有注入问题。
 >
 > - 20210126 修复重复依赖陷入无限回调的问题。

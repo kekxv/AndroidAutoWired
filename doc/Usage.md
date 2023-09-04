@@ -4,6 +4,55 @@
 
 API 文档参照 [API](doc/API.md)。
 
+## 使用`Web`功能
+
+先注册一个`Controller`对象，例如：
+```java
+@Service
+@Controller("/test")
+public class TestController {
+
+  @RequestMapping({"/hello"})
+  public Object hello() throws JSONException {
+    JSONObject json = new JSONObject();
+    json.put("code", 200);
+    json.put("message", "success");
+    json.put("data", "");
+    json.put("ok", true);
+    return json;
+  }
+}
+```
+
+然后使用自动或手动方式注入对象：
+```java
+  @Override
+protected void onCreate(Bundle savedInstanceState) {
+    ...
+    // 自动扫描
+    // IAutoWired.init(this);
+    // 手动设置
+    IAutoWired.init(new Class<?>[]{
+        TestController.class,
+    });
+    ...
+}
+```
+
+最后一步，启动`web`服务，不建议在UI线程启动`start`：
+```java
+WebService.makeWebservice(this, 8081);
+new Thread(() -> {
+  try {
+    WebService.instance().start();
+  } catch (IOException e) {
+    throw new RuntimeException(e);
+  }
+}).start();
+```
+
+以上的例子中，我们注册了一个 `8081` 端口的 `http` 服务，包含接口 `/test/hello`，请求`ip地址:8081/test/hello`，将返回内容：`{"code": 200,"message": "success","data": "","ok": true}`
+
 ## 创建基础接口
 
 ### 教师 ITeacher

@@ -18,6 +18,22 @@
 
 是否是服务类型，如果为 `true` ； 则自动调用 `start` 无参函数 ； 默认为 `false`。
 
+## Controller : @interface
+
+用于标记当前为`web`的`Controller`类，当使用`web`服务的时候将会对他进行接口扫描。
+
+需要先将对象注入。
+
+## RequestMapping : @interface
+
+用于标记当前为`web`的`Controller`类的具体接口方法，支持正则表达式以及多路径。
+
+需要先将对象注入。
+
+### 参数 service
+
+是否是服务类型，如果为 `true` ； 则自动调用 `start` 无参函数 ； 默认为 `false`。
+
 ## AutoWired : @interface
 
 标记为需要自动注入。如果一个对象需要自动注入，则需要添加该注解，将会自动查找实例类并注入。
