@@ -549,7 +549,7 @@ public class IAutoWired {
     // Log.v("testapp", "appname  :" + activity.getPackageName());
     try {
       Class<?> cls = Class.forName(activity.getPackageName()
-          + ".R$" + className);
+        + ".R$" + className);
       // Log.v("testapp", "classname :" + cls.getName());
       id = cls.getField(idName).getInt(cls);
     } catch (Exception e) {
@@ -557,6 +557,18 @@ public class IAutoWired {
       // Log.v("testapp", "get error");
     }
     return id;
+  }
+
+  public static <T> T getBeans(Class<T> clazz) {
+    return getBeans(clazz, "");
+  }
+
+  public static <T> T getBeans(Class<T> clazz, String sign) {
+    String key = clazz.getName() + "_._" + sign;
+    if (beanList.containsKey(key)) {
+      return (T) beanList.get(key);
+    }
+    return null;
   }
 
   /**

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
 import com.alibaba.fastjson.JSON;
+import com.kekxv.AutoWired.utils.GsonUtils;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.*;
@@ -62,8 +63,19 @@ public class WebService extends NanoHTTPD {
     webroot = path;
   }
 
+  public Response errorHandler(IHTTPSession session, Throwable e) {
+    IErrorHandler errorHandler = IAutoWired.getBeans(IErrorHandler.class);
+    try {
+      if (errorHandler != null) {
+        return errorHandler.handler(session, e);
+      }
+    } catch (Exception ignored) {
+    }
+    return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "text/plain", "Internal Server Error:" + e.getMessage());
+  }
+
   private Response invoke(Object obj, java.lang.reflect.Method method, IHTTPSession session, Map<String, String> files, String uri, String postData)
-      throws InvocationTargetException, IllegalAccessException {
+    throws InvocationTargetException, IllegalAccessException {
     Object resp = null;
     if (method.getParameterTypes().length > 2) {
       resp = method.invoke(obj, session, files, JSON.parseObject(postData, method.getParameterTypes()[2]));
@@ -80,8 +92,8 @@ public class WebService extends NanoHTTPD {
     }
     if (resp == null) {
       return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE,
-          "plan/text",
-          "SERVICE UNAVAILABLE");
+        "plan/text",
+        "SERVICE UNAVAILABLE");
     }
     if (resp.getClass() == byte[].class) {
       ByteArrayInputStream is = new ByteArrayInputStream((byte[]) resp);
@@ -99,17 +111,35 @@ public class WebService extends NanoHTTPD {
       return (Response) resp;
     } else if (resp.getClass() == org.json.JSONObject.class || resp.getClass() == org.json.JSONArray.class) {
       return newFixedLengthResponse(Response.Status.OK,
-          "application/json",
-          resp.toString());
+        "application/json",
+        resp.toString());
     } else {
-      return newFixedLengthResponse(Response.Status.OK,
+      try {
+        return newFixedLengthResponse(Response.Status.OK,
+          "application/json",
+          GsonUtils.objectToJson(resp));
+      } catch (Exception e) {
+        return newFixedLengthResponse(Response.Status.OK,
           "application/json",
           JSON.toJSONString(resp));
+      }
     }
   }
 
   @Override
   public Response serve(IHTTPSession session) {
+    try {
+      Response resp = _serve(session);
+      if (resp == null) {
+        throw new Exception("resp is null");
+      }
+      return resp;
+    } catch (Throwable e) {
+      return errorHandler(session, e);
+    }
+  }
+
+  public Response _serve(IHTTPSession session) {
     String uri = session.getUri();
     Map<String, String> files = new HashMap<>();
     String postData = "{}";
@@ -210,7 +240,7 @@ public class WebService extends NanoHTTPD {
     try {
       // Calculate etag
       String etag = Integer.toHexString((file.getAbsolutePath()
-          + file.lastModified() + "" + file.length()).hashCode());
+        + file.lastModified() + "" + file.length()).hashCode());
       // Support (simple) skipping:
       long startFrom = 0;
       long endAt = -1;
@@ -224,7 +254,7 @@ public class WebService extends NanoHTTPD {
         try {
           if (minus > 0) {
             startFrom = Long.parseLong(range
-                .substring(0, minus));
+              .substring(0, minus));
             endAt = Long.parseLong(range.substring(minus + 1));
           }
         } catch (NumberFormatException ignored) {
