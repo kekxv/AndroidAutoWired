@@ -129,7 +129,20 @@ public class WebService extends NanoHTTPD {
   @Override
   public Response serve(IHTTPSession session) {
     try {
+      IFilterHandler filterHandler = IAutoWired.getBeans(IFilterHandler.class);
+      if (filterHandler != null) {
+        Response resp_ = filterHandler.onRequest(session);
+        if (resp_ != null) {
+          return resp_;
+        }
+      }
       Response resp = _serve(session);
+      if (filterHandler != null) {
+        Response resp_ = filterHandler.onResponse(session, resp);
+        if (resp_ != null) {
+          resp = resp_;
+        }
+      }
       if (resp == null) {
         throw new Exception("resp is null");
       }
