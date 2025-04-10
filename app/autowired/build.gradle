@@ -9,7 +9,7 @@ def getGroupPageId = { ->
     return "com.kekxv" // Replace with version Name
 }
 def getVersionName = { ->
-    return "0.2.14" // Replace with version Name
+    return "0.2.15" // Replace with version Name
 }
 def getArtificatId = { ->
     return "autowired" // Replace with library name ID
